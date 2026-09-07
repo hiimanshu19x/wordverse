@@ -45,48 +45,45 @@ export const LandingHero: React.FC<LandingHeroProps> = ({
           <span>PLAY TODAY</span>
         </button>
 
-        <div className="landing-sub-actions">
+        <div className="landing-actions-cluster">
           <button
             onClick={() => {
               soundManager.playKeyClick();
               onPlayPractice();
             }}
-            className="landing-link-btn"
+            className="landing-action-btn group/btn"
             title="Unlimited Practice Mode"
           >
-            <RotateCcw className="w-3.5 h-3.5 text-emerald-400" />
-            <span>Practice</span>
+            <RotateCcw className="w-3.5 h-3.5 text-emerald-400 shrink-0 group-hover/btn:rotate-[-45deg] transition-transform" />
+            <span className="text-slate-200 group-hover/btn:text-white font-medium">Practice</span>
           </button>
-
-          <span className="text-slate-600">&bull;</span>
 
           <button
             onClick={() => {
               soundManager.playKeyClick();
               onOpenGalaxy();
             }}
-            className="landing-link-btn"
+            className="landing-action-btn group/btn"
             title="My Personal Galaxy"
           >
-            <Compass className="w-3.5 h-3.5 text-cyan-400" />
-            <span>My Galaxy ({solvedCount})</span>
+            <Compass className="w-3.5 h-3.5 text-cyan-400 shrink-0 group-hover/btn:rotate-45 transition-transform" />
+            <span className="text-slate-200 group-hover/btn:text-white font-medium">My Galaxy ({solvedCount})</span>
           </button>
-
-          <span className="text-slate-600">&bull;</span>
 
           <button
             onClick={() => {
               soundManager.playKeyClick();
               onHowToPlay();
             }}
-            className="landing-link-btn"
-            title="Game rules"
+            className="landing-action-btn group/btn"
+            title="How to play rules"
           >
-            <HelpCircle className="w-3.5 h-3.5 text-slate-400" />
-            <span>How to play</span>
+            <HelpCircle className="w-3.5 h-3.5 text-amber-400 shrink-0 group-hover/btn:scale-110 transition-transform" />
+            <span className="text-slate-200 group-hover/btn:text-white font-medium">How to play</span>
           </button>
         </div>
       </div>
+
     </div>
   );
 };

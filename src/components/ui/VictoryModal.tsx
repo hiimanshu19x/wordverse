@@ -9,8 +9,10 @@ import {
   Award,
   ArrowRight,
   Clock,
+  Home,
   X
 } from 'lucide-react';
+
 import confetti from 'canvas-confetti';
 import type { DailyPuzzle, GuessRowData } from '../../types/game.ts';
 import { getTimeUntilNextPuzzle } from '../../game/dailyEngine.ts';
@@ -272,12 +274,13 @@ export const VictoryModal: React.FC<VictoryModalProps> = ({
         </div>
 
         {onBackToLanding && (
-          <div className="pt-2 text-center">
+          <div className="pt-3">
             <button
               onClick={onBackToLanding}
-              className="text-xs text-slate-400 hover:text-cyan-300 transition-colors underline underline-offset-4"
+              className="w-full py-2.5 px-4 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 active:scale-[0.98] border border-slate-700/70 text-slate-200 hover:text-white text-xs font-bold tracking-wider flex items-center justify-center gap-2 transition-all shadow-sm"
             >
-              &larr; Return to Main Landing
+              <Home className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+              <span>RETURN TO MAIN LANDING</span>
             </button>
           </div>
         )}
@@ -285,3 +288,4 @@ export const VictoryModal: React.FC<VictoryModalProps> = ({
     </div>
   );
 };
+

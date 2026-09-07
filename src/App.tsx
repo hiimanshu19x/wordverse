@@ -351,7 +351,13 @@ export function App() {
 
   // --- ACTIONS ---
   const handleReturnToMainLanding = useCallback(() => {
+    soundManager.userInteracted();
     soundManager.playKeyClick();
+    setActiveModal(null);
+    setIsExploringWorld(false);
+    setIsLanding(true);
+    setCameraMode('intro');
+
     const daily = getDailyPuzzle();
     setPuzzle(daily);
     setClues(WordWorldReactionEngine.generateCluesForWord(daily.word, daily.dayNumber));
@@ -382,10 +388,8 @@ export function App() {
       setGameStatus('in_progress');
       setTimeSeconds(0);
     }
-    setIsExploringWorld(false);
-    setIsLanding(true);
-    setCameraMode('intro');
   }, []);
+
 
   const handlePlayToday = () => {
     soundManager.userInteracted();
@@ -589,7 +593,7 @@ export function App() {
       <ToastNotification message={toastMessage} />
 
       {/* Victory Modal */}
-      {gameStatus === 'won' && activeModal === null && (
+      {!isLanding && gameStatus === 'won' && activeModal === null && (
         <VictoryModal
           puzzle={puzzle}
           guessesCount={currentRowIndex + 1}
@@ -607,7 +611,7 @@ export function App() {
       )}
 
       {/* Defeat Modal */}
-      {gameStatus === 'lost' && activeModal === null && (
+      {!isLanding && gameStatus === 'lost' && activeModal === null && (
         <DefeatModal
           puzzle={puzzle}
           streak={stats.currentStreak}
@@ -620,6 +624,7 @@ export function App() {
           isExploring={isExploringWorld}
         />
       )}
+
 
       {/* Personal Galaxy Modal Overlay */}
       {activeModal === 'galaxy' && (

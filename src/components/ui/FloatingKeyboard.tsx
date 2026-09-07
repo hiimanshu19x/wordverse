@@ -1,5 +1,6 @@
 import React, { useEffect, useCallback, useState, useRef } from 'react';
-import { Delete, PanelLeft, PanelRight, GripHorizontal, RotateCcw } from 'lucide-react';
+import { Delete, PanelLeft, PanelRight, GripHorizontal, RotateCcw, ChevronDown, ChevronUp, Keyboard } from 'lucide-react';
+
 import type { LetterStatus } from '../../types/game.ts';
 import { soundManager } from '../../audio/soundManager.ts';
 
@@ -32,6 +33,8 @@ export const FloatingKeyboard: React.FC<FloatingKeyboardProps> = ({
 }) => {
   // Movable Floating Keyboard state
   const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' && window.innerWidth <= 768);
+  const [isMobileHidden, setIsMobileHidden] = useState<boolean>(false);
+
 
   useEffect(() => {
     const handleResize = () => {
@@ -189,84 +192,121 @@ export const FloatingKeyboard: React.FC<FloatingKeyboardProps> = ({
       : 'keyboard-dock-right';
 
   return (
-    <div
-      ref={keyboardRef}
-      className={`keyboard-container ${!isMobile && customPos ? 'keyboard-custom-floating' : dockClass} ${isDragging ? 'is-dragging' : ''}`}
-      style={
-        !isMobile && customPos
-          ? {
-              position: 'fixed',
-              left: `${customPos.x}px`,
-              top: `${customPos.y}px`,
-              right: 'auto',
-              bottom: 'auto',
-              transform: 'none',
-              zIndex: 35
-            }
-          : undefined
-      }
-      role="group"
-      aria-label="Virtual Keyboard"
-    >
-      <div className="keyboard-chassis">
-        {/* Movable Drag Handle & Dock Controls Bar - Desktop only */}
-        {!isMobile && (
-          <div
-            className="keyboard-dock-bar keyboard-drag-handle"
-            onPointerDown={handlePointerDown}
-            onPointerMove={handlePointerMove}
-            onPointerUp={handlePointerUp}
-            title="Drag anywhere to move keyboard"
-          >
-            <div className="flex items-center gap-1.5 pointer-events-none">
-              <GripHorizontal className="w-3.5 h-3.5 text-slate-400" />
-              <span className="keyboard-dock-title">
-                {customPos ? 'FLOATING KEYBOARD' : 'KEYBOARD (DRAG TO MOVE)'}
-              </span>
-            </div>
+    <>
+      {isMobile && isMobileHidden && (
+        <button
+          type="button"
+          onClick={() => {
+            soundManager.playKeyClick();
+            setIsMobileHidden(false);
+          }}
+          className="keyboard-mobile-show-pill"
+          aria-label="Show Virtual Keyboard"
+        >
+          <Keyboard className="w-4 h-4 text-emerald-400 shrink-0" />
+          <span>Show Keyboard</span>
+          <ChevronUp className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+        </button>
+      )}
 
-            <div className="keyboard-dock-controls" onPointerDown={(e) => e.stopPropagation()}>
-              {customPos && (
+      <div
+        ref={keyboardRef}
+        className={`keyboard-container ${!isMobile && customPos ? 'keyboard-custom-floating' : dockClass} ${isDragging ? 'is-dragging' : ''} ${isMobile && isMobileHidden ? 'is-mobile-hidden' : ''}`}
+        style={
+          !isMobile && customPos
+            ? {
+                position: 'fixed',
+                left: `${customPos.x}px`,
+                top: `${customPos.y}px`,
+                right: 'auto',
+                bottom: 'auto',
+                transform: 'none',
+                zIndex: 35
+              }
+            : undefined
+        }
+        role="group"
+        aria-label="Virtual Keyboard"
+      >
+        <div className="keyboard-chassis">
+          {/* Mobile Hide Toggle Bar */}
+          {isMobile && (
+            <div className="keyboard-mobile-header">
+              <button
+                type="button"
+                onClick={() => {
+                  soundManager.playKeyClick();
+                  setIsMobileHidden(true);
+                }}
+                className="keyboard-mobile-hide-btn"
+                title="Hide Keyboard to explore 3D world"
+                aria-label="Hide Keyboard"
+              >
+                <ChevronDown className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                <span>Hide Keyboard</span>
+              </button>
+            </div>
+          )}
+
+          {/* Movable Drag Handle & Dock Controls Bar - Desktop only */}
+          {!isMobile && (
+            <div
+              className="keyboard-dock-bar keyboard-drag-handle"
+              onPointerDown={handlePointerDown}
+              onPointerMove={handlePointerMove}
+              onPointerUp={handlePointerUp}
+              title="Drag anywhere to move keyboard"
+            >
+              <div className="flex items-center gap-1.5 pointer-events-none">
+                <GripHorizontal className="w-3.5 h-3.5 text-slate-400" />
+                <span className="keyboard-dock-title">
+                  {customPos ? 'FLOATING KEYBOARD' : 'KEYBOARD (DRAG TO MOVE)'}
+                </span>
+              </div>
+
+              <div className="keyboard-dock-controls" onPointerDown={(e) => e.stopPropagation()}>
+                {customPos && (
+                  <button
+                    onClick={() => {
+                      soundManager.playKeyClick();
+                      handleResetDock(dockPosition);
+                    }}
+                    className="keyboard-dock-btn"
+                    title="Reset to default dock"
+                    type="button"
+                  >
+                    <RotateCcw className="w-3 h-3 text-slate-400" />
+                    <span>RESET</span>
+                  </button>
+                )}
                 <button
                   onClick={() => {
                     soundManager.playKeyClick();
-                    handleResetDock(dockPosition);
+                    handleResetDock('left');
                   }}
-                  className="keyboard-dock-btn"
-                  title="Reset to default dock"
+                  className={`keyboard-dock-btn ${!customPos && dockPosition === 'left' ? 'active' : ''}`}
+                  title="Dock keyboard to the left"
                   type="button"
                 >
-                  <RotateCcw className="w-3 h-3 text-slate-400" />
-                  <span>RESET</span>
+                  <PanelLeft className="w-3 h-3" />
+                  <span>LEFT</span>
                 </button>
-              )}
-              <button
-                onClick={() => {
-                  soundManager.playKeyClick();
-                  handleResetDock('left');
-                }}
-                className={`keyboard-dock-btn ${!customPos && dockPosition === 'left' ? 'active' : ''}`}
-                title="Dock keyboard to the left"
-                type="button"
-              >
-                <PanelLeft className="w-3 h-3" />
-                <span>LEFT</span>
-              </button>
-              <button
-                onClick={() => {
-                  soundManager.playKeyClick();
-                  handleResetDock('right');
-                }}
-                className={`keyboard-dock-btn ${!customPos && dockPosition === 'right' ? 'active' : ''}`}
-                title="Dock keyboard to the right"
-                type="button"
-              >
-                <span>RIGHT</span>
-                <PanelRight className="w-3 h-3" />
-              </button>
+                <button
+                  onClick={() => {
+                    soundManager.playKeyClick();
+                    handleResetDock('right');
+                  }}
+                  className={`keyboard-dock-btn ${!customPos && dockPosition === 'right' ? 'active' : ''}`}
+                  title="Dock keyboard to the right"
+                  type="button"
+                >
+                  <span>RIGHT</span>
+                  <PanelRight className="w-3 h-3" />
+                </button>
+              </div>
             </div>
-          </div>
-        )}
+          )}
+
 
         {KEYBOARD_ROWS.map((row, rowIndex) => (
           <div key={rowIndex} className="keyboard-row">
@@ -295,5 +335,7 @@ export const FloatingKeyboard: React.FC<FloatingKeyboardProps> = ({
         ))}
       </div>
     </div>
+    </>
   );
 };
+
