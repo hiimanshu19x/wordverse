@@ -13,6 +13,7 @@ import { MiniatureWorld } from './MiniatureWorld.tsx';
 import { ParticleField } from './ParticleField.tsx';
 import { GalaxyView3D } from './GalaxyView3D.tsx';
 import { DynamicWordFX3D } from './DynamicWordFX3D.tsx';
+import { SemanticVFX } from './SemanticVFX.tsx';
 
 interface WorldCanvasProps {
   mode: CameraMode;
@@ -153,6 +154,14 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
                   reducedMotion={reducedMotion}
                 />
               )}
+
+              {/* Full-Screen Semantic Environmental VFX */}
+              <SemanticVFX
+                activeEffects={reactionState?.activeEffects || []}
+                isWon={isWon}
+                reducedMotion={reducedMotion}
+                mode={mode}
+              />
             </>
           )}
 

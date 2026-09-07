@@ -10,7 +10,6 @@ import {
   OasisBiome
 } from './Biomes.tsx';
 import { NPCSystem } from './NPCSystem.tsx';
-import { SemanticVFX } from './SemanticVFX.tsx';
 import { HiddenClues } from './HiddenClues.tsx';
 
 interface MiniatureWorldProps {
@@ -169,14 +168,7 @@ export const MiniatureWorld: React.FC<MiniatureWorldProps> = ({
         reducedMotion={reducedMotion}
       />
 
-      {/* 3. Semantic Environmental VFX (Fire, Rain, Flora, Moon, Waves) */}
-      <SemanticVFX
-        activeEffects={reactionState?.activeEffects || []}
-        isWon={isWon}
-        reducedMotion={reducedMotion}
-      />
-
-      {/* 4. Interactive Hidden Word Clues */}
+      {/* 3. Interactive Hidden Word Clues */}
       <HiddenClues
         clues={clues}
         onDiscoverClue={onDiscoverClue}
