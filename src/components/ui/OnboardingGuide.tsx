@@ -7,7 +7,12 @@ interface OnboardingGuideProps {
 
 export const OnboardingGuide: React.FC<OnboardingGuideProps> = ({ onClose }) => {
   return (
-    <div className="modal-backdrop">
+    <div
+      className="modal-backdrop"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
       <div className="modal-panel">
         <div className="flex items-center justify-between pb-3 border-b border-slate-800">
           <div className="flex items-center gap-2">

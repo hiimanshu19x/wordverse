@@ -26,6 +26,32 @@ export const CameraController: React.FC<CameraControllerProps> = ({
   const trauma = useRef<number>(0);
   const prevFX = useRef<ScreenFXType>(null);
 
+  // Full-window pointer & device orientation tracking for 3D parallax across entire page
+  const windowPointer = useRef({ x: 0, y: 0, targetX: 0, targetY: 0 });
+
+  useEffect(() => {
+    const onPointerMove = (e: PointerEvent) => {
+      windowPointer.current.targetX = (e.clientX / window.innerWidth) * 2 - 1;
+      windowPointer.current.targetY = -((e.clientY / window.innerHeight) * 2 - 1);
+    };
+
+    const onOrientation = (e: DeviceOrientationEvent) => {
+      if (e.gamma !== null && e.beta !== null) {
+        windowPointer.current.targetX = THREE.MathUtils.clamp(e.gamma / 25, -1, 1);
+        windowPointer.current.targetY = THREE.MathUtils.clamp((e.beta - 40) / 25, -1, 1);
+      }
+    };
+
+    window.addEventListener('pointermove', onPointerMove, { passive: true });
+    if (typeof window !== 'undefined' && 'DeviceOrientationEvent' in window) {
+      window.addEventListener('deviceorientation', onOrientation, { passive: true });
+    }
+    return () => {
+      window.removeEventListener('pointermove', onPointerMove);
+      window.removeEventListener('deviceorientation', onOrientation);
+    };
+  }, []);
+
   if (screenFX && screenFX !== prevFX.current) {
     if (screenFX === 'lightning' || screenFX === 'quake') {
       trauma.current = 1.0;
@@ -52,6 +78,23 @@ export const CameraController: React.FC<CameraControllerProps> = ({
   useFrame((state, delta) => {
     if (mode === 'explore' || mode === 'galaxy') return; // Handled by OrbitControls
 
+    // Smoothly dampen towards target window mouse / tilt position
+    windowPointer.current.x = THREE.MathUtils.damp(
+      windowPointer.current.x,
+      windowPointer.current.targetX,
+      4.5,
+      delta
+    );
+    windowPointer.current.y = THREE.MathUtils.damp(
+      windowPointer.current.y,
+      windowPointer.current.targetY,
+      4.5,
+      delta
+    );
+
+    const px = reducedMotion ? 0 : windowPointer.current.x;
+    const py = reducedMotion ? 0 : windowPointer.current.y;
+
     const time = state.clock.getElapsedTime();
     const { width, height } = state.size;
     const aspect = width / height;
@@ -59,15 +102,18 @@ export const CameraController: React.FC<CameraControllerProps> = ({
 
     switch (mode) {
       case 'intro': {
-        // Slow poetic circular drift around the miniature world
+        // Slow poetic circular drift around the miniature world with full-window 3D mouse parallax
         const introRadius = isMobile ? 8.6 : 7.2;
         const introAngle = time * 0.12;
+        const parallaxX = px * (isMobile ? 0.75 : 1.35);
+        const parallaxY = py * (isMobile ? 0.45 : 0.85);
+
         targetPos.current.set(
-          Math.sin(introAngle) * introRadius * 0.55,
-          2.0 + Math.sin(time * 0.2) * 0.3,
+          Math.sin(introAngle) * introRadius * 0.55 + parallaxX,
+          2.0 + Math.sin(time * 0.2) * 0.3 + parallaxY,
           Math.cos(introAngle) * introRadius * 0.75 + 1.6
         );
-        targetLook.current.set(0, -0.3, -0.4);
+        targetLook.current.set(px * 0.35, -0.3 + py * 0.25, -0.4);
         break;
       }
 
@@ -77,21 +123,22 @@ export const CameraController: React.FC<CameraControllerProps> = ({
 
         if (isMobile) {
           const zDist = Math.min(8.6, Math.max(7.2, 3.1 / (2 * Math.tan((45 * Math.PI) / 360) * Math.max(0.44, aspect))));
-          const parallaxX = reducedMotion ? 0 : state.pointer.x * 0.15;
-          const parallaxY = reducedMotion ? 0 : -state.pointer.y * 0.1;
+          const parallaxX = px * 0.55;
+          const parallaxY = py * 0.40;
 
           // Align mobile camera with elevated letter grid safely above fixed bottom keyboard
           targetPos.current.set(parallaxX, 0.95 + parallaxY + nearMissPulse, zDist + nearMissOffset);
-          targetLook.current.set(0, 0.68, 0.1);
+          targetLook.current.set(px * 0.22, 0.68 + py * 0.16, 0.1);
         } else {
-          const parallaxX = reducedMotion ? 0 : state.pointer.x * 0.25;
-          const parallaxY = reducedMotion ? 0 : -state.pointer.y * 0.15;
+          const parallaxX = px * 0.95;
+          const parallaxY = py * 0.65;
 
           targetPos.current.set(parallaxX, 0.40 + parallaxY + nearMissPulse, 6.4 + nearMissOffset);
-          targetLook.current.set(0, 0.15, 0.1);
+          targetLook.current.set(px * 0.35, 0.15 + py * 0.22, 0.1);
         }
         break;
       }
+
 
       case 'submit': {
         if (isMobile) {
@@ -143,6 +190,11 @@ export const CameraController: React.FC<CameraControllerProps> = ({
       camera.position.y + THREE.MathUtils.lerp(currentLook.y, desiredDir.y, lerpSpeed),
       camera.position.z + THREE.MathUtils.lerp(currentLook.z, desiredDir.z, lerpSpeed)
     );
+
+    // Subtle holographic camera roll on mouse move / tilt across entire window
+    if (!reducedMotion) {
+      camera.rotation.z = -px * (isMobile ? 0.015 : 0.025);
+    }
   });
 
   return (

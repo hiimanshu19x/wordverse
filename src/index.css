@@ -165,7 +165,7 @@ html, body, #root {
   align-items: center;
   justify-content: space-between;
   padding: calc(1.5rem + env(safe-area-inset-top, 0px)) 1.25rem calc(1.5rem + env(safe-area-inset-bottom, 0px));
-  background: radial-gradient(circle at 50% 50%, rgba(7, 9, 14, 0.15) 0%, rgba(7, 9, 14, 0.75) 100%);
+  background: radial-gradient(circle at 50% 50%, rgba(7, 9, 14, 0) 0%, rgba(7, 9, 14, 0.35) 100%);
   pointer-events: none;
   animation: landingFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -888,8 +888,9 @@ html, body, #root {
 
 @media (max-width: 640px) {
   .modal-backdrop {
-    padding: 0.65rem;
-    align-items: flex-end;
+    padding: 1rem 0.85rem;
+    align-items: center;
+    justify-content: center;
   }
 }
 
@@ -914,9 +915,9 @@ html, body, #root {
 
 @media (max-width: 640px) {
   .modal-panel {
-    padding: 1.15rem;
-    border-radius: 18px 18px 12px 12px;
-    max-height: calc(100dvh - 1.5rem);
+    padding: 1.25rem 1rem;
+    border-radius: 20px;
+    max-height: calc(100dvh - 2rem);
   }
 }
 

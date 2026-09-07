@@ -72,13 +72,13 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
         }}
       >
         <color attach="background" args={['#07090e']} />
-        <fog attach="fog" args={['#07090e', 6, 22]} />
+        <fog attach="fog" args={['#07090e', 14, 42]} />
 
         {/* Ambient & Directional Lighting modulated by word physics brightness */}
         <hemisphereLight
-          color="#334155"
+          color="#38bdf8"
           groundColor="#090d16"
-          intensity={0.75 * (reactionState?.physics.brightness || 1.0)}
+          intensity={0.65 * (reactionState?.physics.brightness || 1.0)}
         />
         <directionalLight
           position={[5, 10, 6]}

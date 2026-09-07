@@ -14,7 +14,12 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   onClose
 }) => {
   return (
-    <div className="modal-backdrop">
+    <div
+      className="modal-backdrop"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
       <div className="modal-panel">
         <div className="flex items-center justify-between pb-3 border-b border-slate-800">
           <div className="flex items-center gap-2">
@@ -166,9 +171,15 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
         </div>
 
         <div className="pt-3 border-t border-slate-800/80 text-center">
-          <p className="text-[11px] text-slate-500">
+          <p className="text-[11px] text-slate-500 mb-3">
             WORDVERSE &bull; Crafted with Three.js & WebGL
           </p>
+          <button
+            onClick={onClose}
+            className="w-full py-2.5 sm:py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-[0.98] text-xs sm:text-sm font-bold text-white tracking-wider transition-all border border-slate-700 shadow-md flex items-center justify-center gap-2"
+          >
+            DONE
+          </button>
         </div>
       </div>
     </div>
