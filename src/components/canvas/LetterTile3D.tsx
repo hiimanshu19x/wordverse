@@ -48,8 +48,8 @@ export const LetterTile3D: React.FC<LetterTile3DProps> = ({
         };
       case 'misplaced':
         return {
-          baseColor: new THREE.Color('#d97706'), // Warm Amber Gold
-          emissiveColor: new THREE.Color('#b45309'),
+          baseColor: new THREE.Color('#ef4444'), // Vibrant Red (matches HOW TO PLAY guide)
+          emissiveColor: new THREE.Color('#dc2626'),
           emissiveIntensity: 0.65,
           opacity: 1,
           isTransparent: false
@@ -160,7 +160,7 @@ export const LetterTile3D: React.FC<LetterTile3DProps> = ({
       case 'correct':
         return '#34d399'; // Green border
       case 'misplaced':
-        return '#f59e0b'; // Amber border
+        return '#f87171'; // Red border matching HOW TO PLAY
       case 'absent':
         return '#2e3d55'; // Dark slate border
       case 'pending':
@@ -228,7 +228,7 @@ export const LetterTile3D: React.FC<LetterTile3DProps> = ({
         <Text
           position={[0, -0.13, 0.055]}
           fontSize={0.1}
-          color={status === 'correct' ? '#a7f3d0' : status === 'misplaced' ? '#fde68a' : '#64748b'}
+          color={status === 'correct' ? '#a7f3d0' : status === 'misplaced' ? '#fca5a5' : '#64748b'}
           anchorX="center"
           anchorY="middle"
         >

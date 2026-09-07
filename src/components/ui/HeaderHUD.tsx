@@ -23,7 +23,6 @@ interface HeaderHUDProps {
   onOpenSettings: () => void;
   onOpenHowToPlay: () => void;
   onOpenGalaxy: () => void;
-  onOpenOracle: () => void;
   onPracticeNewWord: () => void;
   onBackToMenu: () => void;
   isPractice: boolean;
@@ -40,7 +39,6 @@ export const HeaderHUD: React.FC<HeaderHUDProps> = ({
   onOpenSettings,
   onOpenHowToPlay,
   onOpenGalaxy,
-  onOpenOracle,
   onPracticeNewWord,
   onBackToMenu,
   isPractice,
@@ -142,16 +140,6 @@ export const HeaderHUD: React.FC<HeaderHUDProps> = ({
           </div>
         )}
 
-        {/* Cosmic Oracle Hint Button */}
-        <button
-          onClick={onOpenOracle}
-          className="hud-icon-btn border-amber-500/30 bg-amber-500/10"
-          title="Cosmic Oracle: Reveal poetic riddle"
-          aria-label="Cosmic Oracle"
-        >
-          <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400" />
-        </button>
-
         {/* Practice Mode: New Word */}
         {isPractice && (
           <button
@@ -161,6 +149,18 @@ export const HeaderHUD: React.FC<HeaderHUDProps> = ({
             aria-label="New Practice Word"
           >
             <RotateCcw className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-400" />
+          </button>
+        )}
+
+        {/* Daily Mode: How to Play accessible directly on mobile & desktop */}
+        {!isPractice && (
+          <button
+            onClick={onOpenHowToPlay}
+            className="hud-icon-btn"
+            title="How to Play"
+            aria-label="How to Play"
+          >
+            <HelpCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-300" />
           </button>
         )}
 
@@ -185,15 +185,6 @@ export const HeaderHUD: React.FC<HeaderHUDProps> = ({
           ) : (
             <VolumeX className="w-4 h-4 text-slate-500" />
           )}
-        </button>
-
-        <button
-          onClick={onOpenHowToPlay}
-          className="hud-icon-btn mobile-hide"
-          title="How to Play"
-          aria-label="How to Play"
-        >
-          <HelpCircle className="w-4 h-4 text-slate-300" />
         </button>
 
         {/* Primary controls always accessible on mobile */}

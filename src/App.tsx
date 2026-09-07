@@ -40,7 +40,6 @@ import { StatsModal } from './components/ui/StatsModal.tsx';
 import { SettingsModal } from './components/ui/SettingsModal.tsx';
 import { OnboardingGuide } from './components/ui/OnboardingGuide.tsx';
 import { ToastNotification } from './components/ui/ToastNotification.tsx';
-import { OracleModal } from './components/ui/OracleModal.tsx';
 
 export function App() {
   // --- STATE ---
@@ -81,7 +80,7 @@ export function App() {
 
   // Modals
   const [activeModal, setActiveModal] = useState<
-    'stats' | 'settings' | 'howToPlay' | 'galaxy' | 'oracle' | null
+    'stats' | 'settings' | 'howToPlay' | 'galaxy' | null
   >(null);
   const [selectedGalaxyWorld, setSelectedGalaxyWorld] = useState<SolvedWorld | null>(null);
 
@@ -486,11 +485,6 @@ export function App() {
           onOpenSettings={() => setActiveModal('settings')}
           onOpenHowToPlay={() => setActiveModal('howToPlay')}
           onOpenGalaxy={handleOpenGalaxy}
-          onOpenOracle={() => {
-            soundManager.userInteracted();
-            soundManager.playOracleSwell();
-            setActiveModal('oracle');
-          }}
           onPracticeNewWord={handlePracticeNewWord}
           onBackToMenu={() => {
             soundManager.playKeyClick();
@@ -594,11 +588,6 @@ export function App() {
       {/* How To Play Onboarding Modal */}
       {activeModal === 'howToPlay' && (
         <OnboardingGuide onClose={() => setActiveModal(null)} />
-      )}
-
-      {/* Cosmic Oracle Modal */}
-      {activeModal === 'oracle' && (
-        <OracleModal puzzle={puzzle} onClose={() => setActiveModal(null)} />
       )}
     </div>
   );
