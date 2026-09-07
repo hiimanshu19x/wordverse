@@ -9,7 +9,8 @@ import type {
   GameSettings,
   SolvedWorld,
   WorldReactionState,
-  HiddenClue
+  HiddenClue,
+  SemanticEffectType
 } from './types/game.ts';
 import { getDailyPuzzle, getPracticePuzzle } from './game/dailyEngine.ts';
 import { evaluateGuess, isValidGuess } from './game/evaluator.ts';
@@ -40,6 +41,7 @@ import { StatsModal } from './components/ui/StatsModal.tsx';
 import { SettingsModal } from './components/ui/SettingsModal.tsx';
 import { OnboardingGuide } from './components/ui/OnboardingGuide.tsx';
 import { ToastNotification } from './components/ui/ToastNotification.tsx';
+import { CinematicDemoTour } from './components/ui/CinematicDemoTour.tsx';
 
 export function App() {
   // --- STATE ---
@@ -86,6 +88,19 @@ export function App() {
 
   // Reference for timer
   const timerRef = useRef<number | null>(null);
+
+  // Automated Demo Tour State
+  const [isDemoRunning, setIsDemoRunning] = useState<boolean>(false);
+  const demoBackupRef = useRef<{
+    rows: GuessRowData[];
+    currentRowIndex: number;
+    currentInput: string;
+    gameStatus: GameStatus;
+    timeSeconds: number;
+    cameraMode: CameraMode;
+    isLanding: boolean;
+    reactionState: WorldReactionState;
+  } | null>(null);
 
   // Real-time cinematic screen effects state & timer
   const [activeScreenFX, setActiveScreenFX] = useState<{ type: ScreenFXType; id: number } | null>(null);
@@ -390,6 +405,125 @@ export function App() {
     }
   }, []);
 
+  // --- CINEMATIC DEMO TOUR ACTIONS ---
+  const handleStartDemo = useCallback(() => {
+    soundManager.userInteracted();
+    demoBackupRef.current = {
+      rows: JSON.parse(JSON.stringify(rows)),
+      currentRowIndex,
+      currentInput,
+      gameStatus,
+      timeSeconds,
+      cameraMode,
+      isLanding,
+      reactionState: JSON.parse(JSON.stringify(reactionState)),
+    };
+
+    setRows(
+      Array(6)
+        .fill(null)
+        .map(() => ({
+          letters: [],
+          evaluations: null,
+          isSubmitted: false
+        }))
+    );
+    setCurrentRowIndex(0);
+    setCurrentInput('');
+    setGameStatus('in_progress');
+    setReactionState({
+      activeEffects: [],
+      physics: { gravity: 1.0, scale: 1.0, speed: 1.0, brightness: 1.0 },
+      nearMiss: false,
+      isGlitch: false
+    });
+    setActiveModal(null);
+    setIsDemoRunning(true);
+  }, [rows, currentRowIndex, currentInput, gameStatus, timeSeconds, cameraMode, isLanding, reactionState]);
+
+  const handleStopDemo = useCallback(() => {
+    setIsDemoRunning(false);
+    if (demoBackupRef.current) {
+      const b = demoBackupRef.current;
+      setRows(b.rows);
+      setCurrentRowIndex(b.currentRowIndex);
+      setCurrentInput(b.currentInput);
+      setGameStatus(b.gameStatus);
+      setTimeSeconds(b.timeSeconds);
+      setCameraMode(b.cameraMode);
+      setIsLanding(b.isLanding);
+      setReactionState(b.reactionState);
+      demoBackupRef.current = null;
+    } else {
+      handleReturnToMainLanding();
+    }
+  }, [handleReturnToMainLanding]);
+
+  const handleDemoTypeChar = useCallback((char: string) => {
+    soundManager.playKeyClick();
+    setCurrentInput((prev) => {
+      if (prev.length < 5) return prev + char.toUpperCase();
+      return prev;
+    });
+  }, []);
+
+  const handleDemoSubmitWord = useCallback(
+    (word: string, evaluations: ('correct' | 'misplaced' | 'absent')[]) => {
+      const letters = word.split('');
+      letters.forEach((_, idx) => soundManager.playLetterLaunch(idx));
+
+      evaluations.forEach((status, idx) => {
+        setTimeout(() => {
+          soundManager.playLetterReveal(status, idx);
+        }, idx * 180);
+      });
+
+      if (word === 'STORM') {
+        setReactionState((prev) => ({
+          ...prev,
+          activeEffects: Array.from(new Set<SemanticEffectType>([...prev.activeEffects, 'lightning', 'rain']))
+        }));
+      } else if (word === 'FLAME') {
+        setReactionState((prev) => ({
+          ...prev,
+          activeEffects: Array.from(new Set<SemanticEffectType>([...prev.activeEffects, 'fire']))
+        }));
+      } else if (word === 'APPLE') {
+        setReactionState((prev) => ({
+          ...prev,
+          activeEffects: ['crystal']
+        }));
+      }
+
+      setRows((prevRows) => {
+        const updated = [...prevRows];
+        const targetIdx = updated.findIndex((r) => !r.isSubmitted);
+        if (targetIdx !== -1) {
+          updated[targetIdx] = {
+            letters,
+            evaluations,
+            isSubmitted: true
+          };
+        }
+        return updated;
+      });
+
+      setCurrentInput('');
+      setCurrentRowIndex((prev) => Math.min(5, prev + 1));
+    },
+    []
+  );
+
+  // Auto-start demo if URL query ?demo=true or ?demo=1 is present
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('demo') === 'true' || params.get('demo') === '1' || params.get('demo') === 'yes') {
+      const t = setTimeout(() => {
+        handleStartDemo();
+      }, 700);
+      return () => clearTimeout(t);
+    }
+  }, [handleStartDemo]);
 
   const handlePlayToday = () => {
     soundManager.userInteracted();
@@ -531,7 +665,7 @@ export function App() {
       <ScreenFXOverlay fx={activeScreenFX?.type || null} triggerKey={activeScreenFX?.id || 0} />
 
       {/* Landing Experience Overlay */}
-      {isLanding && activeModal === null && (
+      {isLanding && !isDemoRunning && activeModal === null && (
         <LandingHero
           puzzle={puzzle}
           onPlay={handlePlayToday}
@@ -543,12 +677,13 @@ export function App() {
           }}
           onHowToPlay={() => setActiveModal('howToPlay')}
           onOpenGalaxy={handleOpenGalaxy}
+          onStartDemo={handleStartDemo}
           solvedCount={stats.solvedWorlds.length}
         />
       )}
 
       {/* Main HUD */}
-      {!isLanding && activeModal !== 'galaxy' && (
+      {!isLanding && !isDemoRunning && activeModal !== 'galaxy' && (
         <HeaderHUD
           puzzle={puzzle}
           streak={stats.currentStreak}
@@ -568,6 +703,7 @@ export function App() {
 
       {/* Floating Virtual Keyboard - docked to right/left on desktop, bottom on mobile */}
       {!isLanding &&
+        !isDemoRunning &&
         activeModal === null &&
         !isExploringWorld &&
         gameStatus === 'in_progress' && (
@@ -589,11 +725,23 @@ export function App() {
           />
         )}
 
+      {/* Automated Cinematic Demo Tour */}
+      {isDemoRunning && (
+        <CinematicDemoTour
+          onTypeChar={handleDemoTypeChar}
+          onSubmitDemoWord={handleDemoSubmitWord}
+          onSetCameraMode={setCameraMode}
+          onSetIsLanding={setIsLanding}
+          onTriggerScreenFX={triggerScreenFX}
+          onExit={handleStopDemo}
+        />
+      )}
+
       {/* Toast Notification */}
       <ToastNotification message={toastMessage} />
 
       {/* Victory Modal */}
-      {!isLanding && gameStatus === 'won' && activeModal === null && (
+      {!isLanding && !isDemoRunning && gameStatus === 'won' && activeModal === null && (
         <VictoryModal
           puzzle={puzzle}
           guessesCount={currentRowIndex + 1}
@@ -611,7 +759,7 @@ export function App() {
       )}
 
       {/* Defeat Modal */}
-      {!isLanding && gameStatus === 'lost' && activeModal === null && (
+      {!isLanding && !isDemoRunning && gameStatus === 'lost' && activeModal === null && (
         <DefeatModal
           puzzle={puzzle}
           streak={stats.currentStreak}

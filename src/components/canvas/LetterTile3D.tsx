@@ -252,31 +252,7 @@ export const LetterTile3D: React.FC<LetterTile3DProps> = ({
         </Text>
       )}
 
-      {/* 3D Celestial Halo Ring for Correct Letters */}
-      {status === 'correct' && (
-        <mesh position={[0, 0, -0.012]}>
-          <ringGeometry args={[0.22, 0.26, 32]} />
-          <meshBasicMaterial
-            color="#34d399"
-            transparent
-            opacity={0.6}
-            blending={THREE.AdditiveBlending}
-          />
-        </mesh>
-      )}
 
-      {/* 3D Warm Solar Corona Ring for Misplaced Letters */}
-      {status === 'misplaced' && (
-        <mesh position={[0, 0, -0.012]}>
-          <ringGeometry args={[0.22, 0.26, 32]} />
-          <meshBasicMaterial
-            color="#fbbf24"
-            transparent
-            opacity={0.55}
-            blending={THREE.AdditiveBlending}
-          />
-        </mesh>
-      )}
 
       {/* Energy Light Beam for Correct Letters */}
       {status === 'correct' && (

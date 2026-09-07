@@ -1,5 +1,5 @@
 import React from 'react';
-import { Play, Sparkles, HelpCircle, Compass, RotateCcw } from 'lucide-react';
+import { Play, Sparkles, HelpCircle, Compass, RotateCcw, Clapperboard } from 'lucide-react';
 import type { DailyPuzzle } from '../../types/game.ts';
 import { soundManager } from '../../audio/soundManager.ts';
 
@@ -9,6 +9,7 @@ interface LandingHeroProps {
   onPlayPractice: () => void;
   onHowToPlay: () => void;
   onOpenGalaxy: () => void;
+  onStartDemo: () => void;
   solvedCount: number;
 }
 
@@ -18,6 +19,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({
   onPlayPractice,
   onHowToPlay,
   onOpenGalaxy,
+  onStartDemo,
   solvedCount
 }) => {
   return (
@@ -80,6 +82,18 @@ export const LandingHero: React.FC<LandingHeroProps> = ({
           >
             <HelpCircle className="w-3.5 h-3.5 text-amber-400 shrink-0 group-hover/btn:scale-110 transition-transform" />
             <span className="text-slate-200 group-hover/btn:text-white font-medium">How to play</span>
+          </button>
+
+          <button
+            onClick={() => {
+              soundManager.playKeyClick();
+              onStartDemo();
+            }}
+            className="landing-action-btn group/btn border-emerald-500/40 bg-emerald-950/40 hover:bg-emerald-900/50"
+            title="Watch automated 35-second cinematic playthrough demo"
+          >
+            <Clapperboard className="w-3.5 h-3.5 text-emerald-400 shrink-0 group-hover/btn:scale-110 transition-transform" />
+            <span className="text-emerald-300 group-hover/btn:text-white font-semibold">🎬 Watch Demo</span>
           </button>
         </div>
       </div>
