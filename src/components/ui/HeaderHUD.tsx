@@ -62,12 +62,13 @@ export const HeaderHUD: React.FC<HeaderHUDProps> = ({
 
         <div className="hud-day-badge">
           {isPractice ? (
-            <span className="font-['Space_Grotesk'] font-bold text-amber-400 tracking-wider text-xs flex items-center gap-1">
-              <RotateCcw className="w-3 h-3 text-amber-400" />
-              PRACTICE MODE
+            <span className="font-['Space_Grotesk'] font-bold text-amber-400 tracking-wider text-xs flex items-center gap-1 shrink-0">
+              <RotateCcw className="w-3 h-3 text-amber-400 shrink-0" />
+              <span className="hidden sm:inline">PRACTICE MODE</span>
+              <span className="sm:hidden">PRACTICE</span>
             </span>
           ) : (
-            <span className="font-['Space_Grotesk'] tracking-wider text-xs font-semibold text-slate-300">
+            <span className="font-['Space_Grotesk'] tracking-wider text-xs font-semibold text-slate-300 shrink-0">
               DAY {puzzle.dayNumber}
             </span>
           )}
@@ -79,13 +80,13 @@ export const HeaderHUD: React.FC<HeaderHUDProps> = ({
 
         {/* Active Semantic Reactions Badges */}
         {activeEffects && activeEffects.length > 0 && (
-          <div className="hud-effects-cluster flex items-center gap-1.5 ml-1 overflow-hidden max-w-[95px] sm:max-w-[200px] md:max-w-[340px] shrink">
+          <div className="hud-effects-cluster flex items-center gap-1.5 ml-1 overflow-hidden max-w-[85px] sm:max-w-[200px] md:max-w-[340px] shrink-0">
             {activeEffects.slice(-1).map((eff) => {
               const meta = getReactionMeta(eff as SemanticEffectType);
               return (
                 <span
                   key={eff}
-                  className="text-[9px] sm:text-[10px] uppercase font-bold tracking-wider px-1.5 sm:px-2 py-0.5 rounded-full border animate-pulse flex items-center gap-1 truncate shrink-0 shadow-sm"
+                  className="text-[9px] sm:text-[10px] uppercase font-bold tracking-wider px-1.5 sm:px-2 py-0.5 rounded-full border animate-pulse flex items-center gap-1 whitespace-nowrap shrink-0 shadow-sm"
                   style={{
                     backgroundColor: `${meta.color}22`,
                     color: meta.color,

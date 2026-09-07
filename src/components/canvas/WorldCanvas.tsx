@@ -137,8 +137,9 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
                 reactionState={reactionState}
                 clues={clues}
                 onDiscoverClue={onDiscoverClue}
-                position={mode === 'intro' ? [0, -0.65, 0] : [0, -2.6, -2.5]}
-                scale={mode === 'intro' ? 1.25 : 0.85}
+                mode={mode}
+                position={mode === 'intro' ? [0, -0.65, 0] : [0, -3.1, -2.7]}
+                scale={mode === 'intro' ? 1.25 : 0.78}
               />
 
               {/* Show Letter Grid ONLY during active gameplay & inspection, NEVER on landing */}

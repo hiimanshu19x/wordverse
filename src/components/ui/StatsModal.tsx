@@ -31,7 +31,7 @@ export const StatsModal: React.FC<StatsModalProps> = ({ stats, onClose }) => {
         </div>
 
         {/* 4 Key Metrics */}
-        <div className="grid grid-cols-4 gap-2 my-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 my-4">
           <div className="metric-card">
             <span className="metric-value">{stats.played}</span>
             <span className="metric-label">PLAYED</span>
@@ -43,16 +43,16 @@ export const StatsModal: React.FC<StatsModalProps> = ({ stats, onClose }) => {
           </div>
 
           <div className="metric-card">
-            <div className="flex items-center justify-center gap-0.5">
-              <Flame className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
+            <div className="flex items-center justify-center gap-1.5 min-w-0">
+              <Flame className="w-4 h-4 text-amber-500 fill-amber-500 shrink-0" />
               <span className="metric-value text-amber-400">{stats.currentStreak}</span>
             </div>
             <span className="metric-label">CURRENT</span>
           </div>
 
           <div className="metric-card">
-            <div className="flex items-center justify-center gap-0.5">
-              <Award className="w-3.5 h-3.5 text-cyan-400" />
+            <div className="flex items-center justify-center gap-1.5 min-w-0">
+              <Award className="w-4 h-4 text-cyan-400 shrink-0" />
               <span className="metric-value text-cyan-400">{stats.maxStreak}</span>
             </div>
             <span className="metric-label">MAX</span>
