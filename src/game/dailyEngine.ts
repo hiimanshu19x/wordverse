@@ -34,12 +34,11 @@ const BIOMES: Array<{
 ];
 
 const RIDDLES_MAP: Record<string, string> = {
-  PLANET: 'A solitary sphere wandering in cosmic silence around a golden star.',
+  APPLE: 'A crisp, sweet fruit of wisdom, knowledge, and terrestrial genesis.',
   OASIS: 'A hidden sanctuary of liquid emerald amidst endless barren dunes.',
   PRISM: 'A faceted crystal that scatters pure starlight into iridescent hues.',
   BLOOM: 'The quiet explosion of vibrant petals awakening under dawn.',
   SOLAR: 'Radiance born of atomic fire, breathing life into cold worlds.',
-  AURORA: 'Ribbons of incandescent emerald dancing across the polar sky.',
   EMBER: 'A sleeping spark of memory cradled in warm dark ashes.',
   CHORD: 'Harmonies entwined in vibration, resolving into peace.',
   STONE: 'Silent memory of mountains, weathered by a million tides.',
@@ -47,12 +46,16 @@ const RIDDLES_MAP: Record<string, string> = {
   HAVEN: 'A tranquil shelter from the relentless storms of the cosmos.',
   CLOUD: 'Vaporous wanderers floating between the earth and the heavens.',
   OCEAN: 'An abyss of rhythmic depths echoing the pulse of the tides.',
-  VORTEX: 'A spiraling dance of celestial gravity drawing all things near.',
   SHORE: 'The sacred boundary where relentless waves kiss the eternal land.',
   REALM: 'A kingdom of stone and starlight held together by ancient runes.',
   FROST: 'Delicate crystalline filigree spun by the quiet touch of cold.',
-  FLAME: 'The living spirit of fire that dances and transforms in shadow.'
+  FLAME: 'The living spirit of fire that dances and transforms in shadow.',
+  EARTH: 'A fragile blue pearl cradling life amidst the infinite silence.',
+  LIGHT: 'The primordial radiant wave banishing darkness across all realms.',
+  COMET: 'An icy cosmic nomad trailing a luminous veil through stellar orbits.',
+  STARS: 'Ancient celestial lanterns burning in the endless expanse of the void.'
 };
+
 
 export function getWordRiddle(word: string): string {
   const upper = word.toUpperCase();

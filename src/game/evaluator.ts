@@ -49,17 +49,13 @@ export function evaluateGuess(target: string, guess: string): LetterStatus[] {
 }
 
 /**
- * Validates if the guess is a 5-letter alphabetical word.
- * In addition to the dictionary, we permit any 5-letter valid alphabetical word
- * so players aren't unfairly blocked by vocabulary boundaries.
+ * Validates if the guess is an authentic 5-letter English word in the comprehensive dictionary.
  */
 export function isValidGuess(guess: string): boolean {
   if (guess.length !== 5) return false;
   if (!/^[A-Za-z]+$/.test(guess)) return false;
   
   const upper = guess.toUpperCase();
-  if (VALID_WORDS_SET.has(upper)) return true;
-
-  // Fallback: If it's a valid 5-letter English-like word, allow it for seamless play
-  return true;
+  return VALID_WORDS_SET.has(upper);
 }
+
