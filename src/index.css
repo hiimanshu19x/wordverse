@@ -250,6 +250,7 @@ html, body, #root {
   border-radius: 18px;
   border: 1px solid rgba(255, 255, 255, 0.28);
   cursor: pointer;
+  pointer-events: auto !important;
   box-shadow: 0 10px 35px rgba(16, 185, 129, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.3);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -273,6 +274,7 @@ html, body, #root {
   margin-top: 1.6rem;
   max-width: 480px;
   width: 100%;
+  pointer-events: auto !important;
 }
 
 .landing-action-btn {
@@ -292,6 +294,7 @@ html, body, #root {
   font-weight: 600;
   letter-spacing: 0.02em;
   cursor: pointer;
+  pointer-events: auto !important;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.35);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   touch-action: manipulation;
@@ -474,8 +477,8 @@ html, body, #root {
 
 /* Floating Virtual Keyboard - Responsive Docked Styling */
 .keyboard-container {
-  z-index: 25;
-  pointer-events: auto;
+  z-index: 30;
+  pointer-events: auto !important;
   animation: keyboardFadeUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -491,16 +494,20 @@ html, body, #root {
     position: fixed;
     right: 2rem;
     bottom: 2rem;
-    width: 410px;
-    max-width: 410px;
+    width: 440px;
+    max-width: 440px;
+    z-index: 30;
+    pointer-events: auto;
   }
 
   .keyboard-dock-left {
     position: fixed;
     left: 2rem;
     bottom: 2rem;
-    width: 410px;
-    max-width: 410px;
+    width: 440px;
+    max-width: 440px;
+    z-index: 30;
+    pointer-events: auto;
   }
 
   .keyboard-dock-bottom {
@@ -508,8 +515,10 @@ html, body, #root {
     left: 50%;
     bottom: 1.5rem;
     transform: translateX(-50%);
-    width: 460px;
+    width: 480px;
     max-width: 90vw;
+    z-index: 30;
+    pointer-events: auto;
   }
 }
 
@@ -606,6 +615,8 @@ html, body, #root {
     letter-spacing: 0.06em !important;
     font-weight: 800 !important;
   }
+}
+
 .keyboard-mobile-show-pill {
   position: fixed;
   bottom: calc(0.85rem + env(safe-area-inset-bottom, 12px));
@@ -888,7 +899,7 @@ html, body, #root {
 
 @media (max-width: 640px) {
   .modal-backdrop {
-    padding: 1rem 0.85rem;
+    padding: 0.75rem;
     align-items: center;
     justify-content: center;
   }
@@ -901,23 +912,23 @@ html, body, #root {
 
 .modal-panel {
   width: 100%;
-  max-width: 440px;
+  max-width: 480px;
   max-height: calc(100dvh - 2.5rem);
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   background: rgba(15, 20, 31, 0.94);
   border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 20px;
-  padding: 1.5rem;
+  border-radius: 24px;
+  padding: 1.65rem 1.5rem;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.85);
   scrollbar-width: thin;
 }
 
 @media (max-width: 640px) {
   .modal-panel {
-    padding: 1.25rem 1rem;
-    border-radius: 20px;
-    max-height: calc(100dvh - 2rem);
+    padding: 1.4rem 1.15rem;
+    border-radius: 22px;
+    max-height: calc(100dvh - 1.75rem);
   }
 }
 

@@ -47,7 +47,19 @@ export const FloatingKeyboard: React.FC<FloatingKeyboardProps> = ({
   const [customPos, setCustomPos] = useState<{ x: number; y: number } | null>(() => {
     try {
       const saved = localStorage.getItem('wordverse_keyboard_pos');
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (
+          typeof parsed.x === 'number' &&
+          typeof parsed.y === 'number' &&
+          parsed.x >= 0 &&
+          parsed.x < (typeof window !== 'undefined' ? window.innerWidth - 120 : 2000) &&
+          parsed.y >= 0 &&
+          parsed.y < (typeof window !== 'undefined' ? window.innerHeight - 80 : 2000)
+        ) {
+          return parsed;
+        }
+      }
     } catch {}
     return null;
   });
@@ -290,6 +302,17 @@ export const FloatingKeyboard: React.FC<FloatingKeyboardProps> = ({
                 >
                   <PanelLeft className="w-3 h-3" />
                   <span>LEFT</span>
+                </button>
+                <button
+                  onClick={() => {
+                    soundManager.playKeyClick();
+                    handleResetDock('bottom');
+                  }}
+                  className={`keyboard-dock-btn ${!customPos && dockPosition === 'bottom' ? 'active' : ''}`}
+                  title="Dock keyboard to the bottom center"
+                  type="button"
+                >
+                  <span>BOTTOM</span>
                 </button>
                 <button
                   onClick={() => {
