@@ -350,9 +350,78 @@ export function App() {
   ]);
 
   // --- ACTIONS ---
+  const handleReturnToMainLanding = useCallback(() => {
+    soundManager.playKeyClick();
+    const daily = getDailyPuzzle();
+    setPuzzle(daily);
+    setClues(WordWorldReactionEngine.generateCluesForWord(daily.word, daily.dayNumber));
+    setReactionState({
+      activeEffects: [],
+      physics: { gravity: 1.0, scale: 1.0, speed: 1.0, brightness: 1.0 },
+      nearMiss: false,
+      isGlitch: false
+    });
+    const saved = loadDailyState(daily.dayNumber);
+    if (saved && saved.word === daily.word) {
+      setRows(saved.rows);
+      setCurrentRowIndex(saved.currentRowIndex);
+      setGameStatus(saved.status);
+      setTimeSeconds(saved.timeSeconds);
+    } else {
+      setRows(
+        Array(6)
+          .fill(null)
+          .map(() => ({
+            letters: [],
+            evaluations: null,
+            isSubmitted: false
+          }))
+      );
+      setCurrentRowIndex(0);
+      setCurrentInput('');
+      setGameStatus('in_progress');
+      setTimeSeconds(0);
+    }
+    setIsExploringWorld(false);
+    setIsLanding(true);
+    setCameraMode('intro');
+  }, []);
+
   const handlePlayToday = () => {
     soundManager.userInteracted();
     soundManager.playKeyClick();
+    const daily = getDailyPuzzle();
+    if (puzzle.isPractice || puzzle.word !== daily.word) {
+      setPuzzle(daily);
+      setClues(WordWorldReactionEngine.generateCluesForWord(daily.word, daily.dayNumber));
+      setReactionState({
+        activeEffects: [],
+        physics: { gravity: 1.0, scale: 1.0, speed: 1.0, brightness: 1.0 },
+        nearMiss: false,
+        isGlitch: false
+      });
+      const saved = loadDailyState(daily.dayNumber);
+      if (saved && saved.word === daily.word) {
+        setRows(saved.rows);
+        setCurrentRowIndex(saved.currentRowIndex);
+        setGameStatus(saved.status);
+        setTimeSeconds(saved.timeSeconds);
+      } else {
+        setRows(
+          Array(6)
+            .fill(null)
+            .map(() => ({
+              letters: [],
+              evaluations: null,
+              isSubmitted: false
+            }))
+        );
+        setCurrentRowIndex(0);
+        setCurrentInput('');
+        setGameStatus('in_progress');
+        setTimeSeconds(0);
+      }
+    }
     setIsLanding(false);
     setCameraMode('play');
   };
@@ -486,11 +555,7 @@ export function App() {
           onOpenHowToPlay={() => setActiveModal('howToPlay')}
           onOpenGalaxy={handleOpenGalaxy}
           onPracticeNewWord={handlePracticeNewWord}
-          onBackToMenu={() => {
-            soundManager.playKeyClick();
-            setIsLanding(true);
-            setCameraMode('intro');
-          }}
+          onBackToMenu={handleReturnToMainLanding}
           isPractice={!!puzzle.isPractice}
           currentRowIndex={currentRowIndex}
           activeEffects={reactionState.activeEffects}
@@ -534,6 +599,7 @@ export function App() {
           onExploreWorld={handleExploreWorld}
           onOpenGalaxy={handleOpenGalaxy}
           onPlayPractice={handlePracticeNewWord}
+          onBackToLanding={handleReturnToMainLanding}
           onClose={() => handleExploreWorld()}
           onResume={() => setIsExploringWorld(false)}
           isExploring={isExploringWorld}
@@ -548,6 +614,7 @@ export function App() {
           onExploreWorld={handleExploreWorld}
           onOpenGalaxy={handleOpenGalaxy}
           onPlayPractice={handlePracticeNewWord}
+          onBackToLanding={handleReturnToMainLanding}
           onClose={() => handleExploreWorld()}
           onResume={() => setIsExploringWorld(false)}
           isExploring={isExploringWorld}

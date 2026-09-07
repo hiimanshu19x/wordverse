@@ -30,6 +30,14 @@ export const LetterTile3D: React.FC<LetterTile3DProps> = ({
   const meshRef = useRef<THREE.Group>(null);
   const lightBeamRef = useRef<THREE.Mesh>(null);
   const materialRef = useRef<THREE.MeshStandardMaterial>(null);
+  const popScale = useRef<number>(1.0);
+  const prevLetterRef = useRef<string>(letter);
+
+  // Trigger tactile 3D pop bounce when letter is entered
+  if (letter && !prevLetterRef.current && isCurrentRow) {
+    popScale.current = 1.16;
+  }
+  prevLetterRef.current = letter;
 
   // Animation progression tracking
   const animTime = useRef<number>(0);
@@ -48,8 +56,8 @@ export const LetterTile3D: React.FC<LetterTile3DProps> = ({
         };
       case 'misplaced':
         return {
-          baseColor: new THREE.Color('#ef4444'), // Vibrant Red (matches HOW TO PLAY guide)
-          emissiveColor: new THREE.Color('#dc2626'),
+          baseColor: new THREE.Color('#d97706'), // Warm Amber Orange
+          emissiveColor: new THREE.Color('#b45309'),
           emissiveIntensity: 0.65,
           opacity: 1,
           isTransparent: false
@@ -141,6 +149,14 @@ export const LetterTile3D: React.FC<LetterTile3DProps> = ({
     } else {
       group.position.y = position[1];
     }
+
+    // Tactile 3D pop bounce spring damping on typing
+    if (popScale.current > 1.0) {
+      popScale.current = THREE.MathUtils.lerp(popScale.current, 1.0, delta * 12);
+      group.scale.set(popScale.current, popScale.current, popScale.current);
+    } else if (group.scale.x !== 1.0) {
+      group.scale.set(1.0, 1.0, 1.0);
+    }
   });
 
   // Colorblind accessory symbols
@@ -160,7 +176,7 @@ export const LetterTile3D: React.FC<LetterTile3DProps> = ({
       case 'correct':
         return '#34d399'; // Green border
       case 'misplaced':
-        return '#f87171'; // Red border matching HOW TO PLAY
+        return '#f59e0b'; // Warm Amber border
       case 'absent':
         return '#2e3d55'; // Dark slate border
       case 'pending':
@@ -228,12 +244,38 @@ export const LetterTile3D: React.FC<LetterTile3DProps> = ({
         <Text
           position={[0, -0.13, 0.055]}
           fontSize={0.1}
-          color={status === 'correct' ? '#a7f3d0' : status === 'misplaced' ? '#fca5a5' : '#64748b'}
+          color={status === 'correct' ? '#a7f3d0' : status === 'misplaced' ? '#fde68a' : '#64748b'}
           anchorX="center"
           anchorY="middle"
         >
           {colorblindSymbol}
         </Text>
+      )}
+
+      {/* 3D Celestial Halo Ring for Correct Letters */}
+      {status === 'correct' && (
+        <mesh position={[0, 0, -0.012]}>
+          <ringGeometry args={[0.22, 0.26, 32]} />
+          <meshBasicMaterial
+            color="#34d399"
+            transparent
+            opacity={0.6}
+            blending={THREE.AdditiveBlending}
+          />
+        </mesh>
+      )}
+
+      {/* 3D Warm Solar Corona Ring for Misplaced Letters */}
+      {status === 'misplaced' && (
+        <mesh position={[0, 0, -0.012]}>
+          <ringGeometry args={[0.22, 0.26, 32]} />
+          <meshBasicMaterial
+            color="#fbbf24"
+            transparent
+            opacity={0.55}
+            blending={THREE.AdditiveBlending}
+          />
+        </mesh>
       )}
 
       {/* Energy Light Beam for Correct Letters */}

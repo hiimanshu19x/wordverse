@@ -46,7 +46,7 @@ export const OnboardingGuide: React.FC<OnboardingGuideProps> = ({ onClose }) => 
             </div>
 
             {/* Misplaced Example */}
-            <div className="p-3 bg-slate-900/60 border border-red-800/40 rounded-xl space-y-2">
+            <div className="p-3 bg-slate-900/60 border border-amber-800/40 rounded-xl space-y-2">
               <div className="flex gap-2 items-center">
                 <div className="sample-tile-neutral">V</div>
                 <div className="sample-tile-misplaced">A</div>
@@ -55,7 +55,7 @@ export const OnboardingGuide: React.FC<OnboardingGuideProps> = ({ onClose }) => 
                 <div className="sample-tile-neutral">R</div>
               </div>
               <p className="text-xs text-slate-300">
-                <strong className="text-red-400 font-bold">A</strong> is in the word, but in the wrong spot (wrongly placed).
+                <strong className="text-amber-400 font-bold">A</strong> is in the word, but in the wrong spot (wrongly placed).
               </p>
             </div>
 

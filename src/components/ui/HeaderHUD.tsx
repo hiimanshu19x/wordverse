@@ -51,11 +51,14 @@ export const HeaderHUD: React.FC<HeaderHUDProps> = ({
       <div className="hud-left">
         <button
           onClick={onBackToMenu}
-          className="hud-icon-btn"
-          title="Return to Main Menu"
-          aria-label="Back to Menu"
+          className="hud-back-home-btn flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-800/80 hover:bg-slate-700/80 active:scale-95 border border-slate-700/80 text-slate-200 transition-all shadow-sm"
+          title={isPractice ? 'Exit Practice & Return to Main Landing' : 'Return to Main Landing'}
+          aria-label="Return to Main Landing"
         >
-          <ArrowLeft className="w-4 h-4 text-slate-300" />
+          <ArrowLeft className="w-3.5 h-3.5 text-slate-300 shrink-0" />
+          <span className="text-[11px] font-bold tracking-wider font-['Space_Grotesk']">
+            {isPractice ? 'HOME' : 'MENU'}
+          </span>
         </button>
 
         <div className="hud-day-badge">

@@ -24,6 +24,7 @@ interface VictoryModalProps {
   onExploreWorld: () => void;
   onOpenGalaxy: () => void;
   onPlayPractice: () => void;
+  onBackToLanding?: () => void;
   onClose: () => void;
   onResume?: () => void;
   isExploring: boolean;
@@ -38,6 +39,7 @@ export const VictoryModal: React.FC<VictoryModalProps> = ({
   onExploreWorld,
   onOpenGalaxy,
   onPlayPractice,
+  onBackToLanding,
   onClose,
   onResume,
   isExploring
@@ -84,7 +86,7 @@ export const VictoryModal: React.FC<VictoryModalProps> = ({
           r.evaluations
             ?.map((e) => {
               if (e === 'correct') return '🟩';
-              if (e === 'misplaced') return '🟥';
+              if (e === 'misplaced') return '🟨';
               return '⬛';
             })
             .join('') || ''
@@ -268,6 +270,17 @@ export const VictoryModal: React.FC<VictoryModalProps> = ({
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>
+
+        {onBackToLanding && (
+          <div className="pt-2 text-center">
+            <button
+              onClick={onBackToLanding}
+              className="text-xs text-slate-400 hover:text-cyan-300 transition-colors underline underline-offset-4"
+            >
+              &larr; Return to Main Landing
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
